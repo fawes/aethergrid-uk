@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: dim_energy_assets
+    description: "SCD Type-2 Dimension table tracking UK energy & grid asset capacity history."
+    columns:
+      - name: asset_scd_sk
+        tests: [unique, not_null]
+      - name: asset_id
+        tests: [not_null]
+      - name: asset_type
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['OFFSHORE_WIND', 'UTILITY_SOLAR', 'GAS_TERMINAL', 'DEMAND_HUB']
+
+  - name: fact_asset_weather_risk
+    description: "Incremental Fact table at grain (asset_id, valid_time_utc, forecast_cycle)."
+    columns:
+      - name: forecast_fact_sk
+        tests: [unique, not_null]
+      - name: asset_scd_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_energy_assets')
+                field: asset_scd_sk
+
+  - name: mart_uk_grid_trading_signals
+    description: "Gold Decision Mart powering downstream Kafka CloudEvents & FastAPI OGC endpoints."
+    columns:
+      - name: asset_id
+        tests: [unique, not_null]
+      - name: decision_signal
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['STORM_CUTOUT_ALERT', 'GAS_DEMAND_SURGE', 'OPTIMAL_WIND_DISPATCH', 'NOMINAL_GRID_STATE']
