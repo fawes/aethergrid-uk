@@ -193,8 +193,12 @@ def main() -> None:
     con = duckdb.connect()
     con.execute("INSTALL iceberg; LOAD iceberg;")
 
-    # Query Snapshot 1 (00z) vs Snapshot 2 (12z) directly from Iceberg metadata pointers
-    prev_meta_file = sorted(Path(meta_loc).parent.glob("*.metadata.json"))[1]
+    # Locate the exact metadata.json file whose current-snapshot-id matches snap_00z
+    prev_meta_file = None
+    for mf in sorted(Path(meta_loc).parent.glob("*.metadata.json")):
+        if json.loads(mf.read_text()).get("current-snapshot-id") == snap_00z.snapshot_id:
+            prev_meta_file = mf
+            break
 
     query = f"""
     WITH run_00z AS (
