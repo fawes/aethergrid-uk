@@ -1,0 +1,20 @@
+# Python & uv
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local Lakehouse & Broker Runtime Data
+data/iceberg_warehouse/
+*.db
+*.sqlite
+*.parquet
+
+# dbt & Terraform Local State
+dbt_aethergrid/target/
+dbt_aethergrid/logs/
+dbt_aethergrid/dbt_packages/
+terraform/.terraform/
+*.tfstate
+*.tfstate.*
+.env
