@@ -18,3 +18,8 @@ terraform/.terraform/
 *.tfstate
 *.tfstate.*
 .env
+
+# Redpanda/Kafka Broker Logs & Local dbt User Profile
+data/redpanda_broker_logs/
+dbt_aethergrid/.user.yml
+dbt_aethergrid/profiles.yml
